@@ -23,8 +23,10 @@ public class securityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(customizer -> customizer.disable())
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/register").permitAll()
+                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
@@ -34,7 +36,7 @@ public class securityConfig {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        return  daoAuthenticationProvider;
+        return daoAuthenticationProvider;
     }
 
 }
