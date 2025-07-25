@@ -14,18 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUser(@RequestBody Users users){
-//        return  new ResponseEntity<>(users, HttpStatus.CREATED);
-//    }
-
     @Autowired
     private UserService userService;
-
-    @PostMapping("/register")
-    public Users registerUser(@RequestBody Users users){
-        return userService.registerUsers(users);
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Users users, HttpServletResponse response){
@@ -45,8 +35,7 @@ public class UserController {
         }
     }
 
-
-    @PostMapping("/logout")
+    @PostMapping("/logsout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         System.out.println("InSide logout Controller Method = ");
 
@@ -56,7 +45,11 @@ public class UserController {
         cookie.setPath("/");
         response.addCookie(cookie);
         return ResponseEntity.ok("Logged out successfully");
+    }
 
-
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody Users users){
+        System.out.println("InSide Register Controller Method = " + users.toString());
+        return ResponseEntity.status(HttpStatus.CREATED).body("Register Started");
     }
 }
