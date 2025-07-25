@@ -24,6 +24,7 @@ public class UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     public Users registerUsers(Users users){
+        System.out.println("InSide registerUsers service Method " + users.toString());
         users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
         return userRepo.save(users);
     }
@@ -38,4 +39,6 @@ public class UserService {
         }
         return "fail";
     }
+
+
 }

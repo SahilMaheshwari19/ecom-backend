@@ -24,4 +24,16 @@ public class MyUserDetailService implements UserDetailsService {
         }
         return new UserPrincipal(users);
     }
+
+    public boolean checkIfUserAlreadyExist(String username) {
+        System.out.println("InSide checkIfUserAlreadyExist Method = " + username);
+        Users users = userRepo.findByUsername(username);
+        if (users == null) {
+            System.out.println("User Not Found, Hence Unique username: " + username);
+            return false;
+        }
+        System.out.println("checkIfUserAlreadyExist --  Username exists = " +  username);
+        return true;
+    }
+
 }
