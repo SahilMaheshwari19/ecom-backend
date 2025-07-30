@@ -23,10 +23,10 @@ public class UserService {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
-    public Users registerUsers(Users users){
+    public void registerUsers(Users users){
         System.out.println("InSide registerUsers service Method " + users.toString());
         users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
-        return userRepo.save(users);
+        userRepo.save(users);
     }
 
     public String verify(Users users) {
@@ -35,10 +35,15 @@ public class UserService {
         );
         System.out.println("Authentication = " + authentication);
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(users.getUsername());
+            String token = jwtService.generateToken(users.getUsername());
+            System.out.println("token = " + token);
+            return token;
         }
         return "fail";
     }
 
-
+    public Users fetchUserDetails(String username) {
+        System.out.println("InSide fetchUserDetails service Method " + username);
+        return userRepo.findByUsername(username);
+    }
 }
