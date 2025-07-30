@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -50,9 +49,10 @@ public class securityConfig {
                 .csrf(customizer -> customizer.disable())
                 .cors(cors -> cors.configure(http)) // ✅ add this line
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/register","/login","/api/products/*/image")
-                        .permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/register", "/login", "/api/products/*/image").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().hasAnyRole("USER", "ADMIN")
+                )
                 .httpBasic(Customizer -> Customizer.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
