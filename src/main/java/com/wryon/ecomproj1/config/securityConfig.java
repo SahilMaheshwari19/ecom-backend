@@ -1,5 +1,7 @@
 package com.wryon.ecomproj1.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,8 @@ import java.util.List;
 @EnableWebSecurity
 public class securityConfig {
 
+    Logger LOG = LoggerFactory.getLogger(LoggerFactory.class);
+
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -32,6 +36,7 @@ public class securityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        LOG.info("Inside CorsConfigurationSource method - init CORS");
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -45,6 +50,8 @@ public class securityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        LOG.info("Inside SecurityFilterChain method - init SecurityFilterChain");
+        LOG.info("Inside SecurityFilterChain method - Building Security Filter Chain");
         return http
                 .csrf(customizer -> customizer.disable())
                 .cors(cors -> cors.configure(http)) // ✅ add this line
@@ -61,14 +68,19 @@ public class securityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+        LOG.info("Inside AuthenticationProvider method - init AuthenticationProvider");
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        LOG.info("Inside AuthenticationProvider method - init SET PASSWORD ENCODER");
         daoAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+        LOG.info("Inside AuthenticationProvider method - init SET USER DETAILS");
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        LOG.info("Inside AuthenticationProvider method - returning daoAuthenticationProvider");
         return daoAuthenticationProvider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        LOG.info("Inside AuthenticationManager method - Returning AuthenticationManager");
         return config.getAuthenticationManager();
     }
 }
