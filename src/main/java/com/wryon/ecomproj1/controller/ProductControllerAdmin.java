@@ -25,9 +25,11 @@ public class ProductControllerAdmin {
     public ResponseEntity<?> addProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile){
         LOG.info("InSide addProduct Controller Method");
         try {
+            LOG.info("InSide addProduct Controller -- TRY BLOCK");
             Product newProduct = productService.addProduct(product, imageFile);
             return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
         } catch (Exception e) {
+            LOG.error("InSide addProduct Controller -- CATCH BLOCK {}", e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -37,9 +39,11 @@ public class ProductControllerAdmin {
         LOG.info("InSide UpdateProductById Controller Method");
         Product updatedProduct = productService.UpdateProductById(id, product, imageFile);
         if(updatedProduct != null){
+            LOG.info("InSide UpdateProductById Controller Method -- Product Updated Successfully");
             return new ResponseEntity<>("Product Updated Successfully", HttpStatus.OK);
         }
         else{
+            LOG.warn("InSide UpdateProductById Controller Method -- Product Not Updated");
             return new ResponseEntity<>("Product Not Updated Successfully", HttpStatus.BAD_REQUEST);
         }
     }
@@ -48,9 +52,12 @@ public class ProductControllerAdmin {
     public ResponseEntity<String> deleteProductById(@PathVariable int id){
         LOG.info("InSide deleteProductById Controller Method");
         try {
+            LOG.info("InSide deleteProductById Controller -- TRY BLOCK");
             productService.deleteProductById(id);
+            LOG.info("InSide deleteProductById Controller -- TRY BLOCK -- Product Deleted Successfully");
             return new ResponseEntity<>("Product Deleted Successfully", HttpStatus.OK);
         } catch (Exception e) {
+            LOG.error("InSide deleteProductById Controller -- CATCH BLOCK {}", e.getMessage());
             return new ResponseEntity<>( e.getMessage() + " -- Product Not Deleted Successfully", HttpStatus.NOT_FOUND);
         }
     }

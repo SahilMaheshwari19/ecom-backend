@@ -36,8 +36,10 @@ public class ProductControllerUser {
         LOG.info("InSide getProductByID Controller Method");
         Product product = productService.getProductByID(id);
         if(product != null){
+            LOG.info("InSide getProductByID Controller Method -- Product fetched Successfully");
             return new ResponseEntity<>(product, HttpStatus.OK);
         }else{
+            LOG.warn("InSide UpdateProductById Controller Method -- Product Not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
