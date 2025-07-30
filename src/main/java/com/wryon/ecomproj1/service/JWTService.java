@@ -1,9 +1,13 @@
 package com.wryon.ecomproj1.service;
 
+import com.wryon.ecomproj1.DAO.UserRepo;
+import com.wryon.ecomproj1.model.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +22,24 @@ public class JWTService {
 
     private String secretKey;
 
+    @Autowired
+    private UserRepo userRepo;
+
     public JWTService() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sKey = keyGenerator.generateKey();
             secretKey = Base64.getEncoder().encodeToString(sKey.getEncoded());
+            System.out.println("secretKey: " + secretKey);
         }catch (NoSuchAlgorithmException e){
             throw new RuntimeException(e);
         }
     }
 
     public String generateToken(String userName) {
+        Users user = userRepo.findByUsername(userName);
         Map<String,Object> claims = new HashMap<>();
+        claims.put("roles", user.getRole());
 
         return Jwts.builder()
                 .claims()
@@ -51,6 +61,11 @@ public class JWTService {
     //extract the username from jwt token
     public String extractUserName(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
+    }
+
+    //extract the username from request
+    public String extractUserNameFromRequest(HttpServletRequest request) {
+        return "extractClaim()";
     }
 
     private <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
