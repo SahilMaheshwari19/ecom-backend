@@ -28,11 +28,9 @@ public class Product {
     private Date releaseDate;
     private int quantity;
     private boolean available;
-
+    //IMAGE
     private String imageName;
     private String imageType;
     @Lob
     private byte[] imageData;
-
-
 }
