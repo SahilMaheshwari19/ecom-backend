@@ -1,16 +1,23 @@
 package com.wryon.ecomproj1.controller;
 
+import com.wryon.ecomproj1.DAO.UserRepo;
 import com.wryon.ecomproj1.model.Users;
+import com.wryon.ecomproj1.service.JWTService;
 import com.wryon.ecomproj1.service.MyUserDetailService;
 import com.wryon.ecomproj1.service.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -20,6 +27,11 @@ public class UserController {
 
     @Autowired
     private MyUserDetailService myUserDetailService;
+
+    @Autowired
+    private JWTService jwtService;
+    @Autowired
+    private UserRepo userRepo;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Users users, HttpServletResponse response) {
@@ -33,7 +45,16 @@ public class UserController {
             // cookie.setSecure(true); // enable in production
             // cookie.setSameSite("Strict"); // adjust for CSRF protection
             response.addCookie(cookie);
-            return ResponseEntity.ok("Login Success");
+
+            //fetch username and role
+            Users user = userService.fetchUserDetails(users.getUsername());
+
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("message", "Login Success");
+            responseBody.put("username", user.getUsername());
+            responseBody.put("role", user.getRole());
+            System.out.println("Login Controller Method Map response" + responseBody.toString());
+            return ResponseEntity.ok(responseBody);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Failed -> Invalid Creds");
         }
